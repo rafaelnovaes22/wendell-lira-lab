@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "noEmit": false,
+    "incremental": false,
+    "outDir": ".test-build",
+    "rootDir": "."
+  },
+  "include": [
+    "lib/player-identity.ts",
+    "lib/request-contract.ts",
+    "tests/**/*.ts"
+  ],
+  "exclude": ["node_modules", ".test-build"]
+}

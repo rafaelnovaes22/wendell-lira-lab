@@ -1,0 +1,10 @@
+node_modules
+.next
+.git
+.runtime
+.env*
+npm-debug.log*
+.npm-cache
+.test-build
+tests
+**/.env*
