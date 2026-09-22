@@ -1,17 +1,15 @@
-import Image from "next/image";
 import { ArrowUpRight, Play } from "lucide-react";
 import type { PricingConfig } from "@/lib/pro-lab-types";
+import { publicPath } from "@/lib/site-config";
 
 export function Hero({ pricing }: { pricing: PricingConfig }) {
   return (
     <section className="hero" id="top">
       <div className="hero-visual">
-        <Image
-          src="/hero-pro-lab.png"
+        <img
+          src={publicPath("/hero-pro-lab.png")}
           alt="Wendell Lira analisando partida de EA FC e eFootball em arena tática dourada"
-          fill
-          priority
-          sizes="100vw"
+          fetchPriority="high"
         />
       </div>
       <div className="shell hero-content">
@@ -21,9 +19,9 @@ export function Hero({ pricing }: { pricing: PricingConfig }) {
         </h1>
         <p className="hero-copy">
           Método de Wendell Lira, o brasileiro que venceu Messi no Puskás e
-          virou pro em FIFA/EA FC. Leitura do futebol real aplicada no
-          virtual, com trilhas de EA FC e eFootball, plano adaptativo e
-          mentalidade de decisão.
+          virou pro em FIFA/EA FC. Leitura do futebol real aplicada no virtual,
+          com trilhas de EA FC e eFootball, plano adaptativo e mentalidade de
+          decisão.
         </p>
         <div className="hero-actions">
           <a className="pill-button" href="#diagnostico">

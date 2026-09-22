@@ -1,9 +1,10 @@
 "use client";
 
 import { Check, LockKeyhole, Play } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import type { Lesson, PublicSnapshot } from "@/lib/pro-lab-types";
+import { markLessonComplete } from "@/lib/platform-client";
+import { publicPath } from "@/lib/site-config";
 
 interface VaultProps {
   snapshot: PublicSnapshot;
@@ -18,13 +19,7 @@ export function CourseVault({ snapshot, onSnapshot }: VaultProps) {
     setPending(true);
     setError("");
     try {
-      const response = await fetch("/api/progress", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lessonId }),
-      });
-      if (!response.ok) throw new Error("Não foi possível registrar a aula.");
-      onSnapshot((await response.json()) as PublicSnapshot);
+      onSnapshot(await markLessonComplete(lessonId));
     } catch {
       setError("Não foi possível registrar a aula. Tente novamente.");
     } finally {
@@ -90,7 +85,7 @@ function LessonCard({
   return (
     <article className="glass-panel lesson-card">
       <div className="lesson-image">
-        <Image src={lesson.thumbnail} alt="" fill sizes="180px" />
+        <img src={publicPath(lesson.thumbnail)} alt="" loading="lazy" />
       </div>
       <div className="lesson-body">
         <div>

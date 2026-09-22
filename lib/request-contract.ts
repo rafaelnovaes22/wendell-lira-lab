@@ -1,10 +1,5 @@
 import { InputError } from "./input-error";
-import type {
-  AdminAction,
-  PlayerLevel,
-  PlayerMood,
-  TrainingRequest,
-} from "./pro-lab-types";
+import type { PlayerLevel, PlayerMood, TrainingRequest } from "./pro-lab-types";
 
 export type CoachPayload =
   ({ mode: "plan" } & TrainingRequest) | { mode: "chat"; message: string };
@@ -72,33 +67,4 @@ export function parseCoachPayload(value: unknown): CoachPayload {
 
 export function parseLessonId(value: unknown): string {
   return requiredText(objectPayload(value).lessonId, "Aula", 100);
-}
-
-function parseLesson(
-  value: unknown,
-): Extract<AdminAction, { type: "addLesson" }>["lesson"] {
-  const lesson = objectPayload(value);
-  return {
-    title: requiredText(lesson.title, "Título", 100),
-    focus: requiredText(lesson.focus, "Foco", 200),
-    trackId: requiredText(lesson.trackId, "Trilha", 100),
-    videoUrl: requiredText(lesson.videoUrl, "Vídeo", 2000),
-    durationMinutes: boundedNumber(lesson.durationMinutes, "Duração", 1, 180),
-    xp: boundedNumber(lesson.xp, "XP", 10, 2000),
-  };
-}
-
-export function parseAdminAction(value: unknown): AdminAction {
-  const action = objectPayload(value);
-  if (action.type === "advancePrice") return { type: "advancePrice" };
-  if (action.type === "addLesson")
-    return { type: "addLesson", lesson: parseLesson(action.lesson) };
-  if (action.type !== "updatePricing")
-    throw new InputError("Ação administrativa inválida.");
-  return {
-    type: "updatePricing",
-    current: boundedNumber(action.current, "Preço", 0, 1000000),
-    increaseStep: boundedNumber(action.increaseStep, "Aumento", 0, 1000000),
-    capacity: boundedNumber(action.capacity, "Capacidade", 1, 100000),
-  };
 }

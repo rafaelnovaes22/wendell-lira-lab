@@ -1,10 +1,11 @@
 "use client";
 
 import { Send } from "lucide-react";
-import Image from "next/image";
 import { useState } from "react";
 import type { FormEvent } from "react";
 import type { PlayerProfile } from "@/lib/pro-lab-types";
+import { sendChat } from "@/lib/platform-client";
+import { publicPath } from "@/lib/site-config";
 
 interface ChatMessage {
   role: "coach" | "user";
@@ -29,19 +30,12 @@ export function PerformanceSupport({ profile }: { profile: PlayerProfile }) {
     setError("");
     setLoading(true);
     try {
-      const response = await fetch("/api/coach", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ mode: "chat", message: userText }),
-      });
-      const result = await response.json();
-      if (!response.ok || typeof result.reply !== "string")
-        throw new Error("Coach indisponível.");
+      const reply = await sendChat(userText);
       setMessage("");
       setMessages((current) => [
         ...current,
         { role: "user", text: userText },
-        { role: "coach", text: result.reply },
+        { role: "coach", text: reply },
       ]);
     } catch {
       setError(
@@ -69,11 +63,10 @@ export function PerformanceSupport({ profile }: { profile: PlayerProfile }) {
         </div>
         <div className="support-grid">
           <div className="glass-panel support-copy">
-            <Image
-              src="/championship-trophy.png"
+            <img
+              src={publicPath("/championship-trophy.png")}
               alt="Troféu em uma arena de esports"
-              fill
-              sizes="50vw"
+              loading="lazy"
             />
             <div className="support-content">
               <span className="eyebrow">Protocolo de competição</span>

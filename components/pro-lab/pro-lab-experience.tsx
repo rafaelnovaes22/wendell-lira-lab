@@ -2,6 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import type { PublicSnapshot } from "@/lib/pro-lab-types";
+import { loadSnapshot, resetProgress } from "@/lib/platform-client";
 import { AdaptivePlanner } from "./adaptive-planner";
 import { Authority } from "./authority";
 import { CommandCenter } from "./command-center";
@@ -17,28 +18,33 @@ export function ProLabExperience() {
   const [revision, setRevision] = useState(0);
   const [resetting, setResetting] = useState(false);
 
-  const loadSnapshot = useCallback((): Promise<void> =>
-    fetch("/api/state", { cache: "no-store" })
-      .then(async (response) => {
-        if (!response.ok) throw new Error("Falha ao abrir sua arena.");
-        setSnapshot((await response.json()) as PublicSnapshot);
-        setError("");
-      })
-      .catch(() => { setError("Arena temporariamente indisponível. Tente novamente."); }), []);
+  const loadSnapshotFromStorage = useCallback(
+    (): Promise<void> =>
+      loadSnapshot()
+        .then((loaded) => {
+          setSnapshot(loaded);
+          setError("");
+        })
+        .catch((cause: unknown) => {
+          setError(
+            cause instanceof Error
+              ? cause.message
+              : "Arena temporariamente indisponível. Tente novamente.",
+          );
+        }),
+    [],
+  );
 
   useEffect(() => {
-    void loadSnapshot();
-  }, [loadSnapshot]);
+    void loadSnapshotFromStorage();
+  }, [loadSnapshotFromStorage]);
 
-  async function resetProgress(): Promise<void> {
+  async function resetProgressInStorage(): Promise<void> {
     if (resetting) return;
     setResetting(true);
     setError("");
     try {
-      const response = await fetch("/api/state", { method: "DELETE" });
-      if (!response.ok)
-        throw new Error("Não foi possível reiniciar o progresso.");
-      setSnapshot((await response.json()) as PublicSnapshot);
+      setSnapshot(await resetProgress());
       setRevision((current) => current + 1);
     } catch {
       setError("Não foi possível reiniciar o progresso. Tente novamente.");
@@ -54,7 +60,10 @@ export function ProLabExperience() {
         {error ? (
           <div role="alert">
             <p>{error}</p>
-            <button className="pill-button" onClick={() => void loadSnapshot()}>
+            <button
+              className="pill-button"
+              onClick={() => void loadSnapshotFromStorage()}
+            >
               Tentar novamente
             </button>
           </div>
@@ -85,10 +94,10 @@ export function ProLabExperience() {
           key={`chat-${revision}`}
           profile={snapshot.profile}
         />
-        <CommandCenter snapshot={snapshot} onSnapshot={setSnapshot} />
+        <CommandCenter snapshot={snapshot} />
         <Authority />
       </main>
-      <Footer onReset={resetProgress} resetting={resetting} />
+      <Footer onReset={resetProgressInStorage} resetting={resetting} />
       {error ? (
         <div className="error-banner" role="alert">
           {error}
