@@ -1,17 +1,15 @@
-import Image from "next/image";
 import { ArrowUpRight, Play } from "lucide-react";
 import type { PricingConfig } from "@/lib/pro-lab-types";
+import { publicPath } from "@/lib/site-config";
 
 export function Hero({ pricing }: { pricing: PricingConfig }) {
   return (
     <section className="hero" id="top">
       <div className="hero-visual">
-        <Image
-          src="/hero-pro-lab.png"
+        <img
+          src={publicPath("/hero-pro-lab.png")}
           alt="Wendell Lira analisando partida de EA FC e eFootball em arena tática dourada"
-          fill
-          priority
-          sizes="100vw"
+          fetchPriority="high"
         />
       </div>
       <div className="shell hero-content">

@@ -1,15 +1,16 @@
 import { ArrowUpRight } from "lucide-react";
-import Image from "next/image";
+import { publicPath } from "@/lib/site-config";
 
 export function Authority() {
   return (
     <section className="authority" aria-labelledby="authority-title">
       <div className="authority-image">
-        <Image
-          src="/tactical-desk.png"
+        <img
+          src={publicPath("/tactical-desk.png")}
           alt="Mesa de análise tática com controle, headset e diagramas de campo"
           width={1536}
           height={1024}
+          loading="lazy"
         />
       </div>
       <div className="authority-copy">

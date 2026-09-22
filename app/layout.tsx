@@ -24,7 +24,8 @@ export const metadata: Metadata = {
   openGraph: {
     title: "WENDELL LIRA LAB",
     description: "Do campo ao controle. Puskás virou método.",
-    images: [`${SITE_BASE_PATH}/hero-pro-lab.png`],
+    // Sem prefixo manual: o Next aplica o basePath sozinho aqui.
+    images: ["/hero-pro-lab.png"],
   },
 };
 
