@@ -102,16 +102,3 @@ export interface PublicSnapshot {
     suggestedMentoringFocus: string;
   };
 }
-
-export type AdminAction =
-  | {
-      type: "addLesson";
-      lesson: Omit<Lesson, "id" | "thumbnail" | "published">;
-    }
-  | {
-      type: "updatePricing";
-      current: number;
-      increaseStep: number;
-      capacity: number;
-    }
-  | { type: "advancePrice" };

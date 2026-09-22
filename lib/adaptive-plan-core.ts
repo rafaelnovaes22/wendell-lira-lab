@@ -1,5 +1,4 @@
 import { InputError } from "./input-error";
-import OpenAI from "openai";
 import type {
   Lesson,
   PlatformState,
@@ -15,6 +14,8 @@ const CRISIS_MARKERS = [
   /n[aã]o quero viver/i,
   /me machucar/i,
 ];
+
+const COACH_CHANNEL_URL = "https://kick.com/wendelllira";
 
 export function hasCrisisLanguage(message: string): boolean {
   return CRISIS_MARKERS.some((marker) => marker.test(message));
@@ -34,19 +35,12 @@ export async function createAdaptivePlan(
     throw new InputError(
       "O coach ainda não publicou aulas. O plano estará disponível quando houver conteúdo.",
     );
-  const fallbackNote = fallbackCoachNote(request);
-  const coachNote = await enrichCoachNote(
-    request,
-    player,
-    lessons,
-    fallbackNote,
-  );
   return {
     id: crypto.randomUUID(),
     createdAt: new Date().toISOString(),
     headline: headlineFor(request),
     weeklyFocus: lessons.map((lesson) => lesson.focus).join(" + "),
-    coachNote,
+    coachNote: fallbackCoachNote(request),
     recoveryProtocol: recoveryFor(request.mood),
     sessions: buildSessions(lessons, request.weeklyHours),
   };
@@ -61,8 +55,7 @@ export async function answerCoachChat(
   const lesson = selectChatLesson(message, state.lessons);
   if (!lesson)
     return "Ainda não há aulas publicadas para recomendar. Registre uma decisão que deseja melhorar e retome o plano quando o coach disponibilizar o conteúdo.";
-  const fallback = `Vamos simplificar: trabalhe ${lesson.focus} hoje. Reveja “${lesson.title}”, jogue duas partidas com um único objetivo e registre a decisão que mais se repetiu. Resultado vem de clareza, não de volume.`;
-  return askOpenAI(message, player, lesson, fallback);
+  return `Vamos simplificar: trabalhe ${lesson.focus} hoje. Reveja “${lesson.title}” no canal do coach (${COACH_CHANNEL_URL}), jogue duas partidas com um único objetivo e registre a decisão que mais se repetiu. Resultado vem de clareza, não de volume. Como está o seu ${player.signals.lastMood} antes de jogar?`;
 }
 
 function selectLessons(lessons: Lesson[], request: TrainingRequest): Lesson[] {
@@ -126,56 +119,6 @@ function fallbackCoachNote(request: TrainingRequest): string {
   return `Seu foco não é jogar mais, é repetir melhor. Com ${request.weeklyHours} horas por semana, cada sessão terá um objetivo observável e uma revisão curta. Sem piloto automático.`;
 }
 
-async function enrichCoachNote(
-  request: TrainingRequest,
-  player: PlayerProfile,
-  lessons: Lesson[],
-  fallback: string,
-): Promise<string> {
-  if (!process.env.OPENAI_API_KEY) return fallback;
-  try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL ?? "gpt-5-mini",
-      instructions: coachInstructions(),
-      input: JSON.stringify({
-        request,
-        previousSignals: player.signals,
-        selectedLessons: lessons,
-      }),
-      max_output_tokens: 180,
-    });
-    return response.output_text.trim() || fallback;
-  } catch {
-    return fallback;
-  }
-}
-
-async function askOpenAI(
-  message: string,
-  player: PlayerProfile,
-  lesson: Lesson,
-  fallback: string,
-): Promise<string> {
-  if (!process.env.OPENAI_API_KEY) return fallback;
-  try {
-    const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-    const response = await client.responses.create({
-      model: process.env.OPENAI_MODEL ?? "gpt-5-mini",
-      instructions: coachInstructions(),
-      input: JSON.stringify({
-        message,
-        playerSignals: player.signals,
-        referencedLesson: lesson,
-      }),
-      max_output_tokens: 220,
-    });
-    return response.output_text.trim() || fallback;
-  } catch {
-    return fallback;
-  }
-}
-
 function selectChatLesson(
   message: string,
   lessons: Lesson[],
@@ -188,16 +131,4 @@ function selectChatLesson(
       ? "ansioso"
       : "tranquilo",
   })[0];
-}
-
-function coachInstructions(): string {
-  return [
-    "Você é o Coach WL AI, assistente de performance do WENDELL LIRA LAB.",
-    "Você não é Wendell Lira e nunca deve fingir ser ele.",
-    "Responda em português brasileiro com tom direto, tático, calmo e motivador, com a objetividade do Lirismo.",
-    "Cubra EA FC e eFootball: triangulação, tabela e pivô do futebol real no virtual, mais cabeceio, condução e câmera no eFootball.",
-    "Dê uma ação observável, uma referência à aula recebida e uma pergunta curta.",
-    "Não diagnostique saúde mental. Trate apenas foco, pressão e performance.",
-    "Use no máximo 90 palavras.",
-  ].join(" ");
 }

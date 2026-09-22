@@ -9,7 +9,9 @@
     "rootDir": "."
   },
   "include": [
-    "lib/player-identity.ts",
+    "lib/adaptive-plan-core.ts",
+    "lib/browser-platform.ts",
+    "lib/platform-client.ts",
     "lib/request-contract.ts",
     "tests/**/*.ts"
   ],

@@ -1,11 +1,7 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 import { resolvePlayerId, validPlayerId } from "../lib/player-identity";
-import {
-  parseAdminAction,
-  parseCoachPayload,
-  parseLessonId,
-} from "../lib/request-contract";
+import { parseCoachPayload, parseLessonId } from "../lib/request-contract";
 
 const validPlan = {
   mode: "plan",
@@ -51,17 +47,10 @@ test("contrato rejeita modo, enums, textos e horas inválidos", () => {
   });
 });
 
-test("admin não persiste capacidade não finita nem dados de aula inválidos", () => {
-  const pricing = {
-    type: "updatePricing",
-    current: 100,
-    increaseStep: 10,
-    capacity: 8,
-  };
-  assert.deepEqual(parseAdminAction(pricing), pricing);
-  assert.throws(() => parseAdminAction({ ...pricing, capacity: NaN }));
-  assert.throws(() =>
-    parseAdminAction({ type: "addLesson", lesson: { title: "Aula" } }),
+test("identificador de aula inválido é rejeitado", () => {
+  assert.equal(
+    parseLessonId({ lessonId: " scan-before-pass " }),
+    "scan-before-pass",
   );
   assert.throws(() => parseLessonId({ lessonId: {} }));
 });

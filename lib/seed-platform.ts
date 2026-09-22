@@ -56,6 +56,8 @@ const tracks: TrainingTrack[] = [
   },
 ];
 
+const COACH_CHANNEL_URL = "https://kick.com/wendelllira";
+
 const lessons: Lesson[] = [
   {
     id: "scan-before-pass",
@@ -64,9 +66,9 @@ const lessons: Lesson[] = [
     focus: "leitura real no virtual",
     durationMinutes: 14,
     xp: 180,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/tactical-desk.png",
-    published: false,
+    published: true,
   },
   {
     id: "cursor-discipline",
@@ -75,9 +77,9 @@ const lessons: Lesson[] = [
     focus: "defesa objetiva",
     durationMinutes: 18,
     xp: 220,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/hero-pro-lab.png",
-    published: false,
+    published: true,
   },
   {
     id: "protect-the-center",
@@ -86,9 +88,9 @@ const lessons: Lesson[] = [
     focus: "compactação",
     durationMinutes: 16,
     xp: 200,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/championship-trophy.png",
-    published: false,
+    published: true,
   },
   {
     id: "third-man-run",
@@ -97,9 +99,9 @@ const lessons: Lesson[] = [
     focus: "criação e tabela",
     durationMinutes: 20,
     xp: 240,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/tactical-desk.png",
-    published: false,
+    published: true,
   },
   {
     id: "reset-after-goal",
@@ -108,9 +110,9 @@ const lessons: Lesson[] = [
     focus: "controle emocional",
     durationMinutes: 9,
     xp: 160,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/championship-trophy.png",
-    published: false,
+    published: true,
   },
   {
     id: "review-with-evidence",
@@ -119,9 +121,9 @@ const lessons: Lesson[] = [
     focus: "evolução diária",
     durationMinutes: 22,
     xp: 260,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/hero-pro-lab.png",
-    published: false,
+    published: true,
   },
   {
     id: "header-secret-efootball",
@@ -130,9 +132,9 @@ const lessons: Lesson[] = [
     focus: "cabeceio e posicionamento",
     durationMinutes: 15,
     xp: 230,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/championship-trophy.png",
-    published: false,
+    published: true,
   },
   {
     id: "conduction-camera-efootball",
@@ -141,9 +143,9 @@ const lessons: Lesson[] = [
     focus: "condução, câmera e 4-3-2-1",
     durationMinutes: 17,
     xp: 240,
-    videoUrl: null,
+    videoUrl: COACH_CHANNEL_URL,
     thumbnail: "/tactical-desk.png",
-    published: false,
+    published: true,
   },
 ];
 

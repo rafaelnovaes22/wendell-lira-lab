@@ -8,6 +8,7 @@ import type {
   PublicSnapshot,
   TrainingPlan,
 } from "@/lib/pro-lab-types";
+import { generatePlan } from "@/lib/platform-client";
 
 interface PlannerProps {
   snapshot: PublicSnapshot;
@@ -29,24 +30,11 @@ export function AdaptivePlanner({ snapshot, onSnapshot }: PlannerProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  async function generatePlan() {
+  async function requestPlan() {
     setLoading(true);
     setError("");
     try {
-      const response = await fetch("/api/coach", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          mode: "plan",
-          goal,
-          level,
-          mood,
-          weeklyHours,
-        }),
-      });
-      const result = await response.json();
-      if (!response.ok) throw new Error(result.error ?? "Plano indisponível.");
-      onSnapshot(result.snapshot as PublicSnapshot);
+      onSnapshot(await generatePlan({ goal, level, mood, weeklyHours }));
     } catch (cause) {
       setError(
         cause instanceof Error
@@ -97,7 +85,7 @@ export function AdaptivePlanner({ snapshot, onSnapshot }: PlannerProps) {
               className="pill-button"
               type="button"
               disabled={loading}
-              onClick={() => void generatePlan()}
+              onClick={() => void requestPlan()}
             >
               {loading ? "Lendo seu jogo" : "Criar plano de evolução"}
               <BrainCircuit size={17} />

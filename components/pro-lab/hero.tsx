@@ -21,9 +21,9 @@ export function Hero({ pricing }: { pricing: PricingConfig }) {
         </h1>
         <p className="hero-copy">
           Método de Wendell Lira, o brasileiro que venceu Messi no Puskás e
-          virou pro em FIFA/EA FC. Leitura do futebol real aplicada no
-          virtual, com trilhas de EA FC e eFootball, plano adaptativo e
-          mentalidade de decisão.
+          virou pro em FIFA/EA FC. Leitura do futebol real aplicada no virtual,
+          com trilhas de EA FC e eFootball, plano adaptativo e mentalidade de
+          decisão.
         </p>
         <div className="hero-actions">
           <a className="pill-button" href="#diagnostico">
